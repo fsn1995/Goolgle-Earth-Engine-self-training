@@ -15,7 +15,7 @@ Map.addLayer(image, {bands: ['B4', 'B3', 'B2']} ,'landsat 8');
 print(image, 'image property');
 
 // import landsat annual greenest composite
-var l8 = ee.Image("LANDSAT/LC8_L1T_ANNUAL_GREENEST_TOA/2017")
+var l8 = ee.Image("LANDSAT/LC8_L1T_ANNUAL_GREENEST_TOA/2017");
 Map.addLayer(l8, {bands: ['B4', 'B3', 'B2']} ,'landsat annual');
 
 /* 
