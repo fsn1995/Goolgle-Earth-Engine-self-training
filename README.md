@@ -1,5 +1,5 @@
 # GEE self-Training
-The instruction draft can be viewed here: https://docs.google.com/document/d/1x2IaFITgmmAYplo34DAr4g6Rl_3DH1tl-lvBozpioqc/edit?usp=sharing\
+The instruction draft can be accessed at request ;)
 
 (The first chapter is for those who would like to review some of the basic of remote sensing.)
 # Content
