@@ -13,7 +13,7 @@ sfeng@icrc.org
 //                               preparation                                //
 //--------------------------------------------------------------------------//
 var worldmap = ee.FeatureCollection('USDOS/LSIB_SIMPLE/2017'); //
-var country = ['Switzerland'];//CHANGE the NAME of country here!
+var country = ['Iraq'];//CHANGE the NAME of country here!
 var countryshape = worldmap.filter(ee.Filter.inList('country_na', country)); // filter country from name list
 var roi = countryshape.geometry();// country 
 var roiLayer = ui.Map.Layer(roi, {color: 'white'}, 'roi'); // roi property
@@ -34,7 +34,7 @@ var region =
           [45.34087874468048, 34.50224391573348]]], null, false);
 
 // study time range
-var year_start = 1984; //  MODIS NDVI 2000-02-18T00:00:00 - Present
+var year_start = 1984; 
 var year_end = 2018;
 var month_start = 1;
 var month_end = 12;
@@ -246,39 +246,39 @@ var classified30 = landsat.map(addClass);
 //     region: roi
 // });
 
-Export.image.toDrive({
-    image: classified.select('classification').clip(roi),
-    folder: 'iraq',
-    description: 'luccIraq30yr',
-    scale: 120,
-    region: roi // If not specified, the region defaults to the viewport at the time of invocation
-  });
+// Export.image.toDrive({
+//     image: classified.select('classification').clip(roi),
+//     folder: 'iraq',
+//     description: 'luccIraq30yr',
+//     scale: 120,
+//     region: roi // If not specified, the region defaults to the viewport at the time of invocation
+//   });
 
-Export.image.toAsset({
-  image: classified.select('classification').clip(roi),
-  description: 'luccIraq30yr',
-  assetId: 'luccIraq',
-  scale: 120,
-  region: roi
-});
+// Export.image.toAsset({
+//   image: classified.select('classification').clip(roi),
+//   description: 'luccIraq30yr',
+//   assetId: 'luccIraq',
+//   scale: 120,
+//   region: roi
+// });
 
-Export.video.toDrive({
-    collection: classified30.select('classified'),
-    description: 'classified30',
-    dimensions: 720,
-    framesPerSecond: 12,
-    region: roi,
-    folder: 'iraq'
-  });
+// Export.video.toDrive({
+//     collection: classified30.select('classified'),
+//     description: 'classified30',
+//     dimensions: 720,
+//     framesPerSecond: 12,
+//     region: roi,
+//     folder: 'iraq'
+//   });
 
-Export.video.toDrive({
-    collection: landsat.select(['B3', 'B2', 'B1']),
-    description: 'landsatIraq',
-    dimensions: 720,
-    framesPerSecond: 12,
-    region: roi,
-    folder: 'iraq'
-  });
+// Export.video.toDrive({
+//     collection: landsat.select(['B3', 'B2', 'B1']),
+//     description: 'landsatIraq',
+//     dimensions: 720,
+//     framesPerSecond: 12,
+//     region: roi,
+//     folder: 'iraq'
+//   });
 
 
 // //------------------------------------------------------//
