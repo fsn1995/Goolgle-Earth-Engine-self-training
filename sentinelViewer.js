@@ -25,7 +25,8 @@ Map.centerObject(roi, 9);
 // import sentinel
 var s2 = ee.ImageCollection("COPERNICUS/S2_SR")
            .filterBounds(roi)
-           .filterDate('2019-10-20', '2019-11-06');
+           .filterDate('2019-10-20', '2019-11-06')
+           .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 10));
 
 print(s2);
 // Map.addLayer(s2, {bands: ['TCI_R', 'TCI_G', 'TCI_B']});
