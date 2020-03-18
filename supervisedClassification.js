@@ -1,12 +1,15 @@
 /*
 This is to test the performance of different classifier provided by GEE.
-SVM is the default setting, you may find the scripts for Random Forest and 
+Random Forest is the default setting, you may find the scripts for SVM and 
 CART at the end, commented.
 
 reference: https://developers.google.com/earth-engine/classification
 
+Note: if the page freezes please comment the batch export part or try it with a 
+better computer. 
+
 Shunan Feng
-sfeng@icrc.org
+sfeng@icrc.org/fsn.1995@gmail.com
 */
 
 //--------------------------------------------------------------------------//
@@ -175,20 +178,26 @@ var training = lucc.addBands(imgRef).sample({
 });
 
 // Make a Random Forest classifier and train it.
-var classifier = ee.Classifier.svm({
-    kernelType: 'RBF',
-    gamma: 0.5,
-    cost: 10
-});
+var classifier = ee.Classifier.smileRandomForest(10)
+    .train({
+        features: training,
+        classProperty: label,
+        inputProperties: bands
+    });
+// var classifier = ee.Classifier.svm({
+//     kernelType: 'RBF',
+//     gamma: 0.5,
+//     cost: 10
+// });
 
-var trained = classifier.train(training, 'landcover', bands);
+// var trained = classifier.train(training, 'landcover', bands);
 
-var classified = img.classify(trained);
+var classified = img.classify(classifier);
 
 
 
 // Get a confusion matrix representing resubstitution accuracy.
-var trainAccuracy = trained.confusionMatrix();
+var trainAccuracy = classifier.confusionMatrix();
 print('Resubstitution error matrix: ', trainAccuracy);
 print('Training overall accuracy: ', trainAccuracy.accuracy());
 
@@ -197,12 +206,12 @@ var validation = lucc.addBands(imgRef).sample({
     region: region,
     // scale: 30,
     seed: 1,
-    numPixels: 5000
+    numPixels: 500
     // Filter the result to get rid of any null pixels.
   }).filter(ee.Filter.neq('B1', null));
 
 // Classify the validation data.
-var validated = validation.classify(trained);
+var validated = validation.classify(classifier);
 
 // Get a confusion matrix representing expected accuracy.
 var testAccuracy = validated.errorMatrix('landcover', 'classification');
@@ -221,7 +230,6 @@ var color = [
     '0046c7', 'ffffff', '743411'
 ];
 
-Map.centerObject(roi, 6);
 Map.addLayer(img.clip(roi), {bands: ['B3', 'B2', 'B1'], max: 0.4}, 'landsat');
 Map.addLayer(classified.clip(roi), {min: 11, max: 230, palette: color}, 'classification');
 // print(lucc_palette, 'lucc palette')
@@ -231,20 +239,21 @@ Map.addLayer(classified.clip(roi), {min: 11, max: 230, palette: color}, 'classif
 //--------------------------------------------------------------------------//
 
 var addClass = function(image) {
-    return image.addBands(image.classify(trained));
+    return image.addBands(image.classify(classifier));
 };
 
-var classified30 = landsat.map(addClass);
-
+var classified30 = landsat.map(addClass).select('classification');
+print(classified30);
 //--------------------------------------------------------------------------//
 //                                Exporting                                 // 
 //--------------------------------------------------------------------------//
-// export
-// var batch = require('users/fitoprincipe/geetools:batch');
-// batch.Download.ImageCollection.toDrive(classified30.select('classification'), 'classiyIraq', {
-//     scale: 30,
-//     region: roi
-// });
+// auto export is done here. However the web page may freeze as it's more than 
+// 30 export tasks. Just be patient and try it on a powerful computer.
+var batch = require('users/fitoprincipe/geetools:batch');
+batch.Download.ImageCollection.toDrive(classified30, 'classiyIraq', {
+    scale: 30,
+    region: roi
+});
 
 // Export.image.toDrive({
 //     image: classified.select('classification').clip(roi),
